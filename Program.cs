@@ -138,6 +138,14 @@ namespace RPGBase
             else return false;
         }
 
+        static void AIBehaviour(Player mainPlayer, Player enemyPlayer)
+        {
+            Random moveChoice = new Random();
+            int selection = moveChoice.Next(0, enemyPlayer.moves.Length);
+            Console.WriteLine(selection);
+            mainPlayer.ApplyDamage(enemyPlayer, enemyPlayer.moves[selection]);
+        }
+
         static void Main(string[] args)
         {
             Player mainPlayer = // Create the user's player
@@ -165,6 +173,13 @@ namespace RPGBase
                 if (CheckLostStatus(enemyPlayer))
                 {
                     Console.WriteLine("Congratulations you win!");
+                    Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
+                    break;
+                }
+                AIBehaviour(mainPlayer, enemyPlayer);
+                if (CheckLostStatus(mainPlayer))
+                {
+                    Console.WriteLine("Too bad, you lose!");
                     Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
                     break;
                 }
