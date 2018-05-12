@@ -43,6 +43,7 @@ namespace RPGBase
 
         public void ApplyDamage(Player _player, PlayerMove _move)
         {
+            // Damage modifier calulcations
             int damageDealt = _move.damage;
             if (_move.type == MoveType.Physical)
             {
@@ -95,13 +96,24 @@ namespace RPGBase
             victim.ApplyDamage(attacker, attacker.moves[selection - 1]);
         }
         
-        static void Run()
+        static bool Run()
         {
-            Console.WriteLine("Run stuff goes here");
+            Random runCheck = new Random();
+            if (runCheck.Next(0, 2) == 1)
+            {
+                Console.WriteLine("Run successful!");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Run unsuccessful");
+                return false;
+            }
         }
 
-        static void MainMenu(Player mainPlayer, Player enemyPlayer)
+        static bool MainMenu(Player mainPlayer, Player enemyPlayer)
         {
+            bool result = false;
             Console.WriteLine("1 - Attack");
             Console.WriteLine("2 - Run");
 
@@ -113,9 +125,11 @@ namespace RPGBase
                     break;
                 
                 case 2:
-                    Run();
+                    result = Run();
                     break;
             }
+
+            return result;
         }
 
         static bool CheckLostStatus(Player _player)
@@ -147,7 +161,7 @@ namespace RPGBase
             while (true)
             {
                 DisplayGameStatus(mainPlayer, enemyPlayer);
-                MainMenu(mainPlayer, enemyPlayer);
+                if (MainMenu(mainPlayer, enemyPlayer)) break; // MainMenu will return true if a run attempt was successful
                 if (CheckLostStatus(enemyPlayer))
                 {
                     Console.WriteLine("Congratulations you win!");
