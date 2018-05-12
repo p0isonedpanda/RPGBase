@@ -29,8 +29,9 @@ namespace RPGBase
         public int speed { get; set; }
         public PlayerMove[] moves { get; set; }
 
-        public Player(int _health, int _physAttack, int _physDefence, int _specAttack, int _specDefence, int _speed, PlayerMove[] _moves)
+        public Player(string _name, int _health, int _physAttack, int _physDefence, int _specAttack, int _specDefence, int _speed, PlayerMove[] _moves)
         {
+            name = _name;
             health = _health;
             physAttack = _physAttack;
             physDefence = _physDefence;
@@ -46,7 +47,7 @@ namespace RPGBase
         static void Main(string[] args)
         {
             Player mainPlayer = // Create the user's player
-                new Player(100, 10, 10, 5, 5, 10,
+                new Player("Player", 100, 10, 10, 5, 5, 10,
                 new PlayerMove[] {
                     new PlayerMove("Smack", MoveType.Physical, 5),
                     new PlayerMove("Dab", MoveType.Special, 10),
@@ -55,7 +56,7 @@ namespace RPGBase
                 });
 
             Player enemyPlayer = // Create the enemy's player
-                new Player(100, 10, 10, 5, 5, 10,
+                new Player("Enemy", 100, 10, 10, 5, 5, 10,
                 new PlayerMove[] {
                     new PlayerMove("Smack", MoveType.Physical, 5),
                     new PlayerMove("Dab", MoveType.Special, 10),
