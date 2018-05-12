@@ -40,6 +40,23 @@ namespace RPGBase
             speed = _speed;
             moves = _moves;
         }
+
+        public void ApplyDamage(Player _player, PlayerMove _move)
+        {
+            int damageDealt = _move.damage;
+            if (_move.type == MoveType.Physical)
+            {
+                damageDealt += _player.physAttack - physDefence;
+            }
+            else
+            {
+                damageDealt += _player.specAttack - specDefence;
+            }
+
+            if (damageDealt < 0) damageDealt = 0;
+            health -= damageDealt;
+            Console.WriteLine("{0} attacked with {1} dealing {2} damage!", _player.name, _move.name, damageDealt);
+        }
     }
 
     class Program
@@ -66,9 +83,15 @@ namespace RPGBase
             Console.WriteLine("{0}'s health: {1}", enemyPlayer.name, enemyPlayer.health);
         }
 
-        static void Attack()
+        static void AttackMenu(Player attacker, Player victim)
         {
-            Console.WriteLine("Attack stuff goes here");
+            for (int i = 0; i < attacker.moves.Length; i++)
+            {
+                Console.WriteLine("{0} - {1} {2} {3}", i + 1, attacker.moves[i].name, attacker.moves[i].type, attacker.moves[i].damage);
+            }
+            int selection = ReadIntegerRange("Select a move: ", 1, attacker.moves.Length);
+
+            victim.ApplyDamage(attacker, attacker.moves[selection - 1]);
         }
         
         static void Run()
@@ -76,7 +99,7 @@ namespace RPGBase
             Console.WriteLine("Run stuff goes here");
         }
 
-        static void MainMenu()
+        static void MainMenu(Player mainPlayer, Player enemyPlayer)
         {
             Console.WriteLine("1 - Attack");
             Console.WriteLine("2 - Run");
@@ -85,7 +108,7 @@ namespace RPGBase
             switch (selection)
             {
                 case 1:
-                    Attack();
+                    AttackMenu(mainPlayer, enemyPlayer);
                     break;
                 
                 case 2:
@@ -97,7 +120,7 @@ namespace RPGBase
         static void Main(string[] args)
         {
             Player mainPlayer = // Create the user's player
-                new Player("Player", 100, 10, 10, 5, 5, 10,
+                new Player("Player", 100, 10, 5, 10, 5, 10,
                 new PlayerMove[] {
                     new PlayerMove("Smack", MoveType.Physical, 5),
                     new PlayerMove("Dab", MoveType.Special, 10),
@@ -106,7 +129,7 @@ namespace RPGBase
                 });
 
             Player enemyPlayer = // Create the enemy's player
-                new Player("Enemy", 100, 10, 10, 5, 5, 10,
+                new Player("Enemy", 100, 10, 5, 10, 5, 10,
                 new PlayerMove[] {
                     new PlayerMove("Smack", MoveType.Physical, 5),
                     new PlayerMove("Dab", MoveType.Special, 10),
@@ -117,7 +140,7 @@ namespace RPGBase
             while (true)
             {
                 DisplayGameStatus(mainPlayer, enemyPlayer);
-                MainMenu();
+                MainMenu(mainPlayer, enemyPlayer);
                 break;
             }
         }
