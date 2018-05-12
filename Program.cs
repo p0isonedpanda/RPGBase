@@ -55,6 +55,7 @@ namespace RPGBase
 
             if (damageDealt < 0) damageDealt = 0;
             health -= damageDealt;
+            if (health < 0) health = 0;
             Console.WriteLine("{0} attacked with {1} dealing {2} damage!", _player.name, _move.name, damageDealt);
         }
     }
@@ -117,6 +118,12 @@ namespace RPGBase
             }
         }
 
+        static bool CheckLostStatus(Player _player)
+        {
+            if (_player.health <= 0) return true;
+            else return false;
+        }
+
         static void Main(string[] args)
         {
             Player mainPlayer = // Create the user's player
@@ -141,7 +148,12 @@ namespace RPGBase
             {
                 DisplayGameStatus(mainPlayer, enemyPlayer);
                 MainMenu(mainPlayer, enemyPlayer);
-                break;
+                if (CheckLostStatus(enemyPlayer))
+                {
+                    Console.WriteLine("Congratulations you win!");
+                    Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
+                    break;
+                }
             }
         }
     }
