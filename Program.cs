@@ -44,6 +44,56 @@ namespace RPGBase
 
     class Program
     {
+        static int ReadIntegerRange(string prompt, int min, int max)
+        {
+            int val;
+            bool success;
+
+            Console.Write(prompt);
+            success = Int32.TryParse(Console.ReadLine(), out val);
+            while (success && (val < min || val > max))
+            {
+                Console.Write("Please enter a whole number between {0} and {1}\n{2}", min, max, prompt);
+                success = Int32.TryParse(Console.ReadLine(), out val);
+            }
+
+            return val;
+        }
+
+        static void DisplayGameStatus(Player mainPlayer, Player enemyPlayer)
+        {
+            Console.WriteLine("{0}'s health: {1}", mainPlayer.name, mainPlayer.health);
+            Console.WriteLine("{0}'s health: {1}", enemyPlayer.name, enemyPlayer.health);
+        }
+
+        static void Attack()
+        {
+            Console.WriteLine("Attack stuff goes here");
+        }
+        
+        static void Run()
+        {
+            Console.WriteLine("Run stuff goes here");
+        }
+
+        static void MainMenu()
+        {
+            Console.WriteLine("1 - Attack");
+            Console.WriteLine("2 - Run");
+
+            int selection = ReadIntegerRange("Select an option: ", 1, 2);
+            switch (selection)
+            {
+                case 1:
+                    Attack();
+                    break;
+                
+                case 2:
+                    Run();
+                    break;
+            }
+        }
+
         static void Main(string[] args)
         {
             Player mainPlayer = // Create the user's player
@@ -63,7 +113,13 @@ namespace RPGBase
                     new PlayerMove("Yeet", MoveType.Special, 20),
                     new PlayerMove("Skrrt", MoveType.Physical, 15)
                 });
-            Console.WriteLine("Loaded all thingies successfully");
+
+            while (true)
+            {
+                DisplayGameStatus(mainPlayer, enemyPlayer);
+                MainMenu();
+                break;
+            }
         }
     }
 }
