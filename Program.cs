@@ -158,7 +158,7 @@ namespace RPGBase
                 });
 
             Player enemyPlayer = // Create the enemy's player
-                new Player("Enemy", 100, 10, 5, 10, 5, 10,
+                new Player("Enemy", 100, 10, 5, 10, 5, 9,
                 new PlayerMove[] {
                     new PlayerMove("Smack", MoveType.Physical, 5),
                     new PlayerMove("Dab", MoveType.Special, 10),
@@ -169,19 +169,41 @@ namespace RPGBase
             while (true)
             {
                 DisplayGameStatus(mainPlayer, enemyPlayer);
-                if (MainMenu(mainPlayer, enemyPlayer)) break; // MainMenu will return true if a run attempt was successful
-                if (CheckLostStatus(enemyPlayer))
+
+                // Check which player goes first based off speed stats
+                if (mainPlayer.speed > enemyPlayer.speed)
                 {
-                    Console.WriteLine("Congratulations you win!");
-                    Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
-                    break;
+                    if (MainMenu(mainPlayer, enemyPlayer)) break; // MainMenu will return true if a run attempt was successful
+                    if (CheckLostStatus(enemyPlayer))
+                    {
+                        Console.WriteLine("Congratulations you win!");
+                        Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
+                        break;
+                    }
+                    AIBehaviour(mainPlayer, enemyPlayer);
+                    if (CheckLostStatus(mainPlayer))
+                    {
+                        Console.WriteLine("Too bad, you lose!");
+                        Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
+                        break;
+                    }
                 }
-                AIBehaviour(mainPlayer, enemyPlayer);
-                if (CheckLostStatus(mainPlayer))
+                else
                 {
-                    Console.WriteLine("Too bad, you lose!");
-                    Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
-                    break;
+                    AIBehaviour(mainPlayer, enemyPlayer);
+                    if (CheckLostStatus(mainPlayer))
+                    {
+                        Console.WriteLine("Too bad, you lose!");
+                        Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
+                        break;
+                    }
+                    if (MainMenu(mainPlayer, enemyPlayer)) break; // MainMenu will return true if a run attempt was successful
+                    if (CheckLostStatus(enemyPlayer))
+                    {
+                        Console.WriteLine("Congratulations you win!");
+                        Console.WriteLine("Final result: {0}: {1} | {2}: {3}", mainPlayer.name, mainPlayer.health, enemyPlayer.name, enemyPlayer.health);
+                        break;
+                    }
                 }
             }
         }
