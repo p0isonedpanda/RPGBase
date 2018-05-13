@@ -142,7 +142,6 @@ namespace RPGBase
         {
             Random moveChoice = new Random();
             int selection = moveChoice.Next(0, enemyPlayer.moves.Length);
-            Console.WriteLine(selection);
             mainPlayer.ApplyDamage(enemyPlayer, enemyPlayer.moves[selection]);
         }
 
