@@ -10,6 +10,8 @@ namespace RPGBase
         public string name { get; set; }
         public MoveType type { get; set; }
         public int damage { get; set; }
+        public int mana { get; set; }
+        public int stamina { get; set; }
 
         // Added magic and stamina as attributes(?) to the fuction
         public PlayerMove(string _name, MoveType _type, int _damage, int _mana, int _stamina)
@@ -88,7 +90,7 @@ namespace RPGBase
                 if (_player.stamina < 0) _player.stamina = 0;
                 Console.WriteLine("{0} now has {1} stamina left over!", _player.name, _player.stamina);
             }
-            if (_move.type == MoveType.Magic)
+            else if (_move.type == MoveType.Magic)
             {
                 _player.mana -= _move.mana;
                 if (_player.mana < 20) resourceTaken = 1;
@@ -96,6 +98,10 @@ namespace RPGBase
                 if (_player.mana > 20) _player.mana = 20;
                 if (_player.mana < 0) _player.mana = 0;
                 Console.WriteLine("{0} now has {1} mana left over!", _player.name, _player.mana);
+            }
+            else 
+            {
+                pass
             }
         }
     }
