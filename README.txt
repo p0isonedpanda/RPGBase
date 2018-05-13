@@ -1,0 +1,1 @@
+I tried to add a mana stamina resource system for attacks. pretty sure i failed at it but i gave it a go

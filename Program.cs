@@ -2,19 +2,25 @@
 
 namespace RPGBase
 {
-    public enum MoveType { Physical, Special }
+    // Changed Special to Magic
+    public enum MoveType { Physical, Magic }
 
     public class PlayerMove
     {
         public string name { get; set; }
         public MoveType type { get; set; }
         public int damage { get; set; }
-        
-        public PlayerMove(string _name, MoveType _type, int _damage)
+        public int mana { get; set; }
+        public int stamina { get; set; }
+
+        // Added magic and stamina as attributes(?) to the fuction
+        public PlayerMove(string _name, MoveType _type, int _damage, int _mana, int _stamina)
         {
             name = _name;
             type = _type;
             damage = _damage;
+            mana = _mana;
+            stamina = _stamina;
         }
     }
 
@@ -24,20 +30,30 @@ namespace RPGBase
         public int health { get; set; }
         public int physAttack { get; set; }
         public int physDefence { get; set; }
-        public int specAttack { get; set; }
-        public int specDefence { get; set; }
+        // Changed Special to Magic as it would be in line with mana
+        public int magicAttack { get; set; }
+        public int magicDefence { get; set; }
         public int speed { get; set; }
+        // Added Mana and Stamina as resources to be used to attack
+        public int mana { get; set; }
+        public int stamina { get; set; }
         public PlayerMove[] moves { get; set; }
 
-        public Player(string _name, int _health, int _physAttack, int _physDefence, int _specAttack, int _specDefence, int _speed, PlayerMove[] _moves)
+        // Added magic and stamina as attributes(?) to the fuction
+        // Changed special to magic
+        public Player(string _name, int _health, int _physAttack, int _physDefence, int _magicAttack, int _magicDefence, int _speed, int _mana, int _stamina, PlayerMove[] _moves)
         {
             name = _name;
             health = _health;
             physAttack = _physAttack;
             physDefence = _physDefence;
-            specAttack = _specAttack;
-            specDefence = _specDefence;
+            // Changed special to magic
+            magicAttack = _magicAttack;
+            magicDefence = _magicDefence;
             speed = _speed;
+            // Added mana and stamina
+            mana = _mana;
+            stamina = _stamina;
             moves = _moves;
         }
 
@@ -51,7 +67,8 @@ namespace RPGBase
             }
             else
             {
-                damageDealt += _player.specAttack - specDefence;
+                //Changed special to magic
+                damageDealt += _player.magicAttack - magicDefence;
             }
 
             if (damageDealt < 0) damageDealt = 0;
@@ -59,8 +76,36 @@ namespace RPGBase
             if (health < 0) health = 0;
             Console.WriteLine("{0} attacked with {1} dealing {2} damage!", _player.name, _move.name, damageDealt);
         }
-    }
 
+        // Tried to make a resource take and give system
+        public void takeResource(Player _player, PlayerMove _move)
+        {
+            int resourceTaken = 0;
+            if (_move.type == MoveType.Physical)
+            {
+                _player.stamina -= _move.stamina;
+                if (_player.stamina < 20) resourceTaken = 1;
+                _player.stamina += resourceTaken;
+                if (_player.stamina > 20) _player.stamina = 20;
+                if (_player.stamina < 0) _player.stamina = 0;
+                Console.WriteLine("{0} now has {1} stamina left over!", _player.name, _player.stamina);
+            }
+            else if (_move.type == MoveType.Magic)
+            {
+                _player.mana -= _move.mana;
+                if (_player.mana < 20) resourceTaken = 1;
+                _player.mana += resourceTaken;
+                if (_player.mana > 20) _player.mana = 20;
+                if (_player.mana < 0) _player.mana = 0;
+                Console.WriteLine("{0} now has {1} mana left over!", _player.name, _player.mana);
+            }
+            else 
+            {
+                pass
+            }
+        }
+    }
+    
     class Program
     {
         static int ReadIntegerRange(string prompt, int min, int max)
@@ -81,19 +126,23 @@ namespace RPGBase
 
         static void DisplayGameStatus(Player mainPlayer, Player enemyPlayer)
         {
-            Console.WriteLine("{0}'s health: {1}", mainPlayer.name, mainPlayer.health);
-            Console.WriteLine("{0}'s health: {1}", enemyPlayer.name, enemyPlayer.health);
+            // Added stamina and mana to the status and rearanged the look of how it's displayed
+            Console.WriteLine("{0} - health: {1}, stamina: {2}, mana: {3}", mainPlayer.name, mainPlayer.health, mainPlayer.stamina, mainPlayer.mana);
+            Console.WriteLine("{0} - health: {1}, stamina: {2}, mana: {3}", enemyPlayer.name, enemyPlayer.health, enemyPlayer.stamina, enemyPlayer.mana);
         }
 
         static void AttackMenu(Player attacker, Player victim)
         {
             for (int i = 0; i < attacker.moves.Length; i++)
             {
-                Console.WriteLine("{0} - {1} {2} {3}", i + 1, attacker.moves[i].name, attacker.moves[i].type, attacker.moves[i].damage);
+                // Added mana and stamina requirements for the moves
+                Console.WriteLine("{0} - {1} {2} {3} {4} {5}", i + 1, attacker.moves[i].name, attacker.moves[i].type, attacker.moves[i].damage, attacker.moves[i].mana, attacker.moves[i].stamina);
             }
             int selection = ReadIntegerRange("Select a move: ", 1, attacker.moves.Length);
 
             victim.ApplyDamage(attacker, attacker.moves[selection - 1]);
+            // Tried to make a resource take and give system
+            attacker.takeResource(attacker, attacker.moves);
         }
         
         static bool Run()
@@ -148,21 +197,25 @@ namespace RPGBase
         static void Main(string[] args)
         {
             Player mainPlayer = // Create the user's player
-                new Player("Player", 100, 10, 5, 10, 5, 10,
+                // Added mana and stamina to the mainPlayer
+                new Player("Player", 100, 10, 5, 10, 5, 10, 20, 20,
                 new PlayerMove[] {
-                    new PlayerMove("Smack", MoveType.Physical, 5),
-                    new PlayerMove("Dab", MoveType.Special, 10),
-                    new PlayerMove("Yeet", MoveType.Special, 20),
-                    new PlayerMove("Skrrt", MoveType.Physical, 15)
+                    // Added resource requirments to the moves
+                    new PlayerMove("Smack", MoveType.Physical, 5, 0, 2),
+                    new PlayerMove("Dab", MoveType.Magic, 10, 4, 0),
+                    new PlayerMove("Yeet", MoveType.Magic, 20, 8, 0),
+                    new PlayerMove("Skrrt", MoveType.Physical, 15, 0, 6)
                 });
 
             Player enemyPlayer = // Create the enemy's player
-                new Player("Enemy", 100, 10, 5, 10, 5, 9,
+                // Added mana and stamina to the enemyPlayer
+                new Player("Enemy", 100, 10, 5, 10, 5, 9, 20, 20,
                 new PlayerMove[] {
-                    new PlayerMove("Smack", MoveType.Physical, 5),
-                    new PlayerMove("Dab", MoveType.Special, 10),
-                    new PlayerMove("Yeet", MoveType.Special, 20),
-                    new PlayerMove("Skrrt", MoveType.Physical, 15)
+                    // Added resource requirments to the moves
+                    new PlayerMove("Smack", MoveType.Physical, 5, 0, 2),
+                    new PlayerMove("Dab", MoveType.Magic, 10, 4, 0),
+                    new PlayerMove("Yeet", MoveType.Magic, 20, 8, 0),
+                    new PlayerMove("Skrrt", MoveType.Physical, 15, 0, 6)
                 });
 
             while (true)
